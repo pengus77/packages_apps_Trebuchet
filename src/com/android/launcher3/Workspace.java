@@ -47,6 +47,8 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.os.Parcelable;
+import android.os.PowerManager;
+import android.os.SystemClock;
 import android.os.UserHandle;
 import android.text.TextUtils;
 import android.util.AttributeSet;
@@ -60,8 +62,6 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.accessibility.AccessibilityNodeInfo;
 import android.widget.Toast;
-
-import com.android.internal.util.bliss.BlissUtils;
 
 import com.android.launcher3.Launcher.LauncherOverlay;
 import com.android.launcher3.LauncherAppWidgetHost.ProviderChangedListener;
@@ -293,7 +293,10 @@ public class Workspace extends PagedView<WorkspacePageIndicator>
             @Override
             public boolean onDoubleTap(MotionEvent event) {
                 if (Utilities.useSleepGesture(context)) {
-                    BlissUtils.switchScreenOff(context);
+		    PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
+		    if (pm!= null && pm.isScreenOn()) {
+		        pm.goToSleep(SystemClock.uptimeMillis());
+		    }
                 }
                 return true;
             }
